@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Inter/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Rubik';
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Rubik/Rubik-VariableFont_wght.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Rubik';
+	font-style: italic;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Rubik/Rubik-Italic-VariableFont_wght.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Ubuntu Sans Mono';
+	font-style: normal;
+	font-weight: 100 700;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Ubuntu_Sans_Mono/UbuntuSansMono-VariableFont_wght.ttf') format('truetype');
+}
+@font-face {
+	font-family: 'Ubuntu Sans Mono';
+	font-style: italic;
+	font-weight: 100 700;
+	font-display: swap;
+	src: url('./assets/Inter,Rubik,Ubuntu_Sans_Mono/Ubuntu_Sans_Mono/UbuntuSansMono-Italic-VariableFont_wght.ttf') format('truetype');
+}
+
+body {
+	font-family: 'Inter', system-ui, sans-serif;
+	background-color: #f5f5f5;
+	color: #333;
+}
+
+.font-inter { font-family: 'Inter', system-ui, sans-serif; }
+.font-rubik { font-family: 'Rubik', 'Inter', system-ui, sans-serif; }
+.font-ubuntu-mono { font-family: 'Ubuntu Sans Mono', monospace; }
+
+.fw-thin { font-variation-settings: 'wght' 100; }
+.fw-light { font-variation-settings: 'wght' 300; }
+.fw-regular { font-variation-settings: 'wght' 400; }
+.fw-medium { font-variation-settings: 'wght' 500; }
+.fw-semibold { font-variation-settings: 'wght' 600; }
+.fw-bold { font-variation-settings: 'wght' 700; }
+.fw-extrabold { font-variation-settings: 'wght' 800; }
+.fw-black { font-variation-settings: 'wght' 900; }
