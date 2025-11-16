@@ -131,6 +131,33 @@ const Choice = () => {
                             </p>
                         </div>
                     )}
+                    {/* Upload format examples: show CSV and JSON templates so users know how to structure files */}
+                    <div className="mt-4 p-4 bg-white border-l-4 border-blue-500 rounded-md text-sm shadow-sm">
+                        <div className="text-gray-900 text-sm font-semibold mb-2">Upload format </div>
+                        <div className="mb-3">
+                            <div className="text-xs text-gray-600 mb-1">CSV (header row required and fields must match):</div>
+                            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">{
+`instrumentGuid,tradeDate,price,exchange,productType
+string, YYYY-MM-DD, number, string, string`
+                            }</pre>
+                        </div>
+
+                        <div className="mb-2">
+                            <div className="text-xs text-gray-600 mb-1">JSON (array of objects):</div>
+                            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">{
+`[
+  {"instrumentGuid": "string", "tradeDate": "YYYY-MM-DD", "price": number, "exchange": "string", "productType": "string"}
+]` 
+                            }</pre>
+                        </div>
+
+                        <div className="text-xs text-gray-700">
+                            <div>- Use YYYY-MM-DD for dates</div>
+                            <div>- `price` must be a numeric value (no $ symbol)</div>
+                            <div>- Field names must match exactly the header keys above</div>
+                            <div>- CSV must include the header row</div>
+                        </div>
+                    </div>
                 </div>
             );
         }
