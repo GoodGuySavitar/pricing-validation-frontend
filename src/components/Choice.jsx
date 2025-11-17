@@ -17,10 +17,10 @@ const LabeledInput = ({ label, type = "text", value, onChange, placeholder = "",
 
 const MethodButton = ({ label, isActive, colorClass, onClick }) => (
     <button 
-        className={`px-4 py-2 rounded-lg font-bold transition-all ${
+        className={`px-4 py-2 rounded-lg font-bold transition-all bg-black ${colorClass} ${
             isActive 
-                ? `bg-black ${colorClass} shadow-lg scale-105` 
-                : `bg-black ${colorClass}/80 hover:${colorClass} hover:shadow-md hover:scale-105`
+                ? "shadow-lg scale-105" 
+                : "opacity-80 hover:opacity-100 hover:shadow-md hover:scale-105"
         }`}
         onClick={onClick}
     >
