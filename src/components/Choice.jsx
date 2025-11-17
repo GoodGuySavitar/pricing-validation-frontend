@@ -1,18 +1,64 @@
 import { useState } from "react";
 import ResponseDisplay from "./ResponseDisplay.jsx";
 
-// {
-//   "instrumentGuid": "string",
-//   "tradeDate": "string",
-//   "price": 0.1,
-//   "exchange": "string",
-//   "productType": "string"
-// }
+const LabeledInput = ({ label, type = "text", value, onChange, placeholder = "", step }) => (
+    <label className="block mb-4">
+        <span className="text-gray-800 text-sm font-semibold mb-1 block">{label}</span>
+        <input 
+            type={type}
+            step={step}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+        />
+    </label>
+);
+
+const MethodButton = ({ label, isActive, colorClass, onClick }) => (
+    <button 
+        className={`px-4 py-2 rounded-lg font-bold transition-all ${
+            isActive 
+                ? `bg-black ${colorClass} shadow-lg scale-105` 
+                : `bg-black ${colorClass}/80 hover:${colorClass} hover:shadow-md hover:scale-105`
+        }`}
+        onClick={onClick}
+    >
+        {label}
+    </button>
+);
+
+const UploadFormatNotes = () => (
+    <div className="mt-4 p-4 bg-white border-l-4 border-blue-500 rounded-md text-sm shadow-sm">
+        <div className="text-gray-900 text-sm font-semibold mb-2">Upload format</div>
+        <div className="mb-3">
+            <div className="text-xs text-gray-600 mb-1">CSV (header row required and fields must match):</div>
+            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">
+{`instrumentGuid,tradeDate,price,exchange,productType
+string, YYYY-MM-DD, number, string, string`}
+            </pre>
+        </div>
+        <div className="mb-2">
+            <div className="text-xs text-gray-600 mb-1">JSON (array of objects):</div>
+            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">
+{`[
+{"instrumentGuid": "string", "tradeDate": "YYYY-MM-DD", "price": number, "exchange": "string", "productType": "string"}
+]`}
+            </pre>
+        </div>
+        <div className="text-xs text-gray-700">
+            <div>- Use YYYY-MM-DD for dates</div>
+            <div>- `price` must be a numeric value (no $ symbol)</div>
+            <div>- Field names must match exactly the header keys above</div>
+            <div>- CSV must include the header row</div>
+        </div>
+    </div>
+);
 
 const Choice = () => {
     const [chosen, setChosen] = useState("GET");
-    const [id, setId] = useState("");
     const [instrumentGuid, setInstrumentGuid] = useState("");
+    const [currentInstrumentGuid, setCurrentInstrumentGuid] = useState("");
     const [tradeDate, setTradeDate] = useState("");
     const [price, setPrice] = useState("");
     const [exchange, setExchange] = useState("");
@@ -20,79 +66,41 @@ const Choice = () => {
     const [response, setResponse] = useState(null);
     const [file, setFile] = useState(null);
 
-    const getColor = () => {
-        switch(chosen) {
-            case "GET":
-            case "GET BY ID":
-                return "text-[#5fdd9a]";
-            case "POST":
-                return "text-[#ffd24b]";
-            case "PUT":
-                return "text-[#74aef6]";
-            case "DELETE":
-            case "DELETE BY ID":
-                return "text-red-400";
-            case "UPLOAD":
-                return "text-purple-600";
-            default:
-                return "text-black";
-        }
-    };
-
     const bodyField = () => {
         return (
             <div>
-                <label className="block mb-4">
-                    <span className="text-gray-800 text-sm font-semibold mb-1 block">Instrument GUID</span>
-                    <input 
-                        type="text" 
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter instrument GUID"
-                        value={instrumentGuid}
-                        onChange={e => setInstrumentGuid(e.target.value)}
-                    />
-                </label>
-                <label className="block mb-4">
-                    <span className="text-gray-800 text-sm font-semibold mb-1 block">Trade Date</span>
-                    <input 
-                        type="text" 
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter trade date"
-                        value={tradeDate}
-                        onChange={e => setTradeDate(e.target.value)}
-                    />
-                </label>
-                <label className="block mb-4">
-                    <span className="text-gray-800 text-sm font-semibold mb-1 block">Price</span>
-                    <input 
-                        type="number" 
-                        step="0.01"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="0.1"
-                        value={price}
-                        onChange={e => setPrice(e.target.value)}
-                    />
-                </label>
-                <label className="block mb-4">
-                    <span className="text-gray-800 text-sm font-semibold mb-1 block">Exchange</span>
-                    <input 
-                        type="text" 
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter exchange"
-                        value={exchange}
-                        onChange={e => setExchange(e.target.value)}
-                    />
-                </label>
-                <label className="block mb-4">
-                    <span className="text-gray-800 text-sm font-semibold mb-1 block">Product Type</span>
-                    <input 
-                        type="text" 
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter product type"
-                        value={productType}
-                        onChange={e => setProductType(e.target.value)}
-                    />
-                </label>
+                <LabeledInput 
+                    label="Instrument GUID"
+                    value={instrumentGuid}
+                    onChange={e => setInstrumentGuid(e.target.value)}
+                    placeholder={chosen === "PUT" ? "Enter new instrument GUID" : "Enter instrument GUID"}
+                />
+                <LabeledInput 
+                    label="Trade Date"
+                    value={tradeDate}
+                    onChange={e => setTradeDate(e.target.value)}
+                    placeholder="Enter trade date"
+                />
+                <LabeledInput 
+                    label="Price"
+                    type="number"
+                    step="0.01"
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                    placeholder="0.1"
+                />
+                <LabeledInput 
+                    label="Exchange"
+                    value={exchange}
+                    onChange={e => setExchange(e.target.value)}
+                    placeholder="Enter exchange"
+                />
+                <LabeledInput 
+                    label="Product Type"
+                    value={productType}
+                    onChange={e => setProductType(e.target.value)}
+                    placeholder="Enter product type"
+                />
             </div>
         );
     };
@@ -131,33 +139,7 @@ const Choice = () => {
                             </p>
                         </div>
                     )}
-                    {/* Upload format examples: show CSV and JSON templates so users know how to structure files */}
-                    <div className="mt-4 p-4 bg-white border-l-4 border-blue-500 rounded-md text-sm shadow-sm">
-                        <div className="text-gray-900 text-sm font-semibold mb-2">Upload format </div>
-                        <div className="mb-3">
-                            <div className="text-xs text-gray-600 mb-1">CSV (header row required and fields must match):</div>
-                            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">{
-`instrumentGuid,tradeDate,price,exchange,productType
-string, YYYY-MM-DD, number, string, string`
-                            }</pre>
-                        </div>
-
-                        <div className="mb-2">
-                            <div className="text-xs text-gray-600 mb-1">JSON (array of objects):</div>
-                            <pre className="bg-slate-100 text-xs rounded p-3 overflow-x-auto font-mono text-slate-800">{
-`[
-  {"instrumentGuid": "string", "tradeDate": "YYYY-MM-DD", "price": number, "exchange": "string", "productType": "string"}
-]` 
-                            }</pre>
-                        </div>
-
-                        <div className="text-xs text-gray-700">
-                            <div>- Use YYYY-MM-DD for dates</div>
-                            <div>- `price` must be a numeric value (no $ symbol)</div>
-                            <div>- Field names must match exactly the header keys above</div>
-                            <div>- CSV must include the header row</div>
-                        </div>
-                    </div>
+                    <UploadFormatNotes />
                 </div>
             );
         }
@@ -165,16 +147,12 @@ string, YYYY-MM-DD, number, string, string`
         if (chosen === "GET BY ID" || chosen === "DELETE") {
             return (
                 <div className="mt-6 w-full">
-                    <label className="block">
-                        <span className="text-gray-700 text-sm font-medium mb-1 block">ID</span>
-                        <input 
-                            type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter ID"
-                            value={id}
-                            onChange={e => setId(e.target.value)}
-                        />
-                    </label>
+                    <LabeledInput 
+                        label="Instrument GUID"
+                        value={instrumentGuid}
+                        onChange={e => setInstrumentGuid(e.target.value)}
+                        placeholder="Enter instrument GUID"
+                    />
                 </div>
             );
         }
@@ -188,16 +166,12 @@ string, YYYY-MM-DD, number, string, string`
         if (chosen === "PUT") {
             return (
                 <div className="mt-6 w-full">
-                    <label className="block mb-4">
-                        <span className="text-gray-700 text-sm font-medium mb-1 block">ID</span>
-                        <input 
-                            type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="Enter ID"
-                            value={id}
-                            onChange={e => setId(e.target.value)}
-                        />
-                    </label>
+                    <LabeledInput 
+                        label="Current Instrument GUID (to update)"
+                        value={currentInstrumentGuid}
+                        onChange={e => setCurrentInstrumentGuid(e.target.value)}
+                        placeholder="Enter current instrument GUID"
+                    />
                     {bodyField()}
                 </div>
             );
@@ -246,12 +220,20 @@ string, YYYY-MM-DD, number, string, string`
                 method = "GET";
                 break;
             case "GET BY ID":
-                url = `${baseUrl}/${id}`;
+                if (!instrumentGuid) {
+                    alert('Please provide an instrument GUID');
+                    return;
+                }
+                url = `${baseUrl}/${encodeURIComponent(instrumentGuid)}`;
                 method = "GET";
                 break;
             case "POST":
                 url = `${baseUrl}`;
                 method = "POST";
+                if (!instrumentGuid) {
+                    alert('Please provide an instrument GUID');
+                    return;
+                }
                 body = JSON.stringify({
                     instrumentGuid: instrumentGuid,
                     tradeDate: tradeDate,
@@ -261,7 +243,15 @@ string, YYYY-MM-DD, number, string, string`
                 });
                 break;
             case "PUT":
-                url = `${baseUrl}/${id}`;
+                if (!currentInstrumentGuid) {
+                    alert('Please provide the current instrument GUID');
+                    return;
+                }
+                if (!instrumentGuid) {
+                    alert('Please provide the instrument GUID for the updated object');
+                    return;
+                }
+                url = `${baseUrl}/${encodeURIComponent(currentInstrumentGuid)}`;
                 method = "PUT";
                 body = JSON.stringify({
                     instrumentGuid: instrumentGuid,
@@ -272,7 +262,11 @@ string, YYYY-MM-DD, number, string, string`
                 });
                 break;
             case "DELETE":
-                url = `${baseUrl}/${id}`;
+                if (!instrumentGuid) {
+                    alert('Please provide an instrument GUID');
+                    return;
+                }
+                url = `${baseUrl}/${encodeURIComponent(instrumentGuid)}`;
                 method = "DELETE";
                 break;
             default:
@@ -297,9 +291,18 @@ string, YYYY-MM-DD, number, string, string`
                     status: apiResponse.status 
                 });
             } else {
-                setResponse({ 
-                    message: `Error: ${apiResponse.status} ${apiResponse.statusText}` 
-                });
+                if (apiResponse.status === 409 && (chosen === "POST" || chosen === "PUT")) {
+                    setResponse({
+                        message: chosen === "POST"
+                            ? "instrumentGuid already exists! Enter a unique instrumentGuid."
+                            : "The new instrumentGuid already exists! Enter a unique instrumentGuid.",
+                        status: apiResponse.status
+                    });
+                } else {
+                    setResponse({ 
+                        message: `Error: ${apiResponse.status} ${apiResponse.statusText}` 
+                    });
+                }
             }
         } catch (error) {
             setResponse({ message: "Error: " + error.message });
@@ -315,66 +318,42 @@ string, YYYY-MM-DD, number, string, string`
                 <div className="mb-6">
                     <label className="text-gray-800 text-lg font-semibold mb-2 block">Select An Action</label>
                     <div className="grid grid-cols-3 gap-3">
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "GET" 
-                                    ? "bg-black text-[#5fdd9a] shadow-lg scale-105" 
-                                    : "bg-black text-[#5fdd9a]/80 hover:text-[#5fdd9a] hover:shadow-md hover:scale-105"
-                            }`}
+                        <MethodButton 
+                            label="GET"
+                            isActive={chosen === "GET"}
+                            colorClass="text-[#5fdd9a]"
                             onClick={() => setChosen("GET")}
-                        >
-                            GET
-                        </button>
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "GET BY ID" 
-                                    ? "bg-black text-[#5fdd9a] shadow-lg scale-105" 
-                                    : "bg-black text-[#5fdd9a]/80 hover:text-[#5fdd9a] hover:shadow-md hover:scale-105"
-                            }`}
+                        />
+                        <MethodButton 
+                            label="GET BY ID"
+                            isActive={chosen === "GET BY ID"}
+                            colorClass="text-[#5fdd9a]"
                             onClick={() => setChosen("GET BY ID")}
-                        >
-                            GET BY ID
-                        </button>
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "POST" 
-                                    ? "bg-black text-[#ffd24b] shadow-lg scale-105" 
-                                    : "bg-black text-[#ffd24b]/80 hover:text-[#ffd24b] hover:shadow-md hover:scale-105"
-                            }`}
+                        />
+                        <MethodButton 
+                            label="POST"
+                            isActive={chosen === "POST"}
+                            colorClass="text-[#ffd24b]"
                             onClick={() => setChosen("POST")}
-                        >
-                            POST
-                        </button>
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "PUT" 
-                                    ? "bg-black text-[#74aef6] shadow-lg scale-105" 
-                                    : "bg-black text-[#74aef6]/80 hover:text-[#74aef6] hover:shadow-md hover:scale-105"
-                            }`}
+                        />
+                        <MethodButton 
+                            label="PUT"
+                            isActive={chosen === "PUT"}
+                            colorClass="text-[#74aef6]"
                             onClick={() => setChosen("PUT")}
-                        >
-                            PUT
-                        </button>
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "DELETE" 
-                                    ? "bg-black text-red-400 shadow-lg scale-105" 
-                                    : "bg-black text-red-400/80 hover:text-red-400 hover:shadow-md hover:scale-105"
-                            }`}
+                        />
+                        <MethodButton 
+                            label="DELETE"
+                            isActive={chosen === "DELETE"}
+                            colorClass="text-red-400"
                             onClick={() => setChosen("DELETE")}
-                        >
-                            DELETE
-                        </button>
-                        <button 
-                            className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                                chosen === "UPLOAD" 
-                                    ? "bg-black text-purple-600 shadow-lg" 
-                                    : "bg-black text-purple-600/80 hover:text-purple-600 hover:shadow-md hover:scale-105"
-                            }`}
+                        />
+                        <MethodButton 
+                            label="UPLOAD"
+                            isActive={chosen === "UPLOAD"}
+                            colorClass="text-purple-600"
                             onClick={() => setChosen("UPLOAD")}
-                        >
-                            UPLOAD
-                        </button>
+                        />
                     </div>
                 </div>
 

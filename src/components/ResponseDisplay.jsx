@@ -1,3 +1,20 @@
+// Helper components defined within this file
+const StatCard = ({ label, value, variant = "default" }) => {
+    const variants = {
+        default: { bg: "bg-gray-50", border: "border-gray-200", labelColor: "text-gray-500", valueColor: "text-gray-900" },
+        success: { bg: "bg-green-50", border: "border-green-200", labelColor: "text-green-600", valueColor: "text-green-700" },
+        error: { bg: "bg-red-50", border: "border-red-200", labelColor: "text-red-600", valueColor: "text-red-700" }
+    };
+    const v = variants[variant];
+    
+    return (
+        <div className={`${v.bg} p-3 rounded-md border ${v.border}`}>
+            <div className={`text-xs ${v.labelColor} mb-1`}>{label}</div>
+            <div className={`text-lg font-semibold ${v.valueColor}`}>{value}</div>
+        </div>
+    );
+};
+
 const ResponseDisplay = ({ response }) => {
     if (!response) {
         return null;
@@ -15,30 +32,12 @@ const ResponseDisplay = ({ response }) => {
                     <div className="mb-6">
                         <h3 className="text-sm font-semibold text-gray-800 mb-3">Summary</h3>
                         <div className="grid grid-cols-3 gap-3">
-                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                <div className="text-xs text-gray-500 mb-1">Total Rows</div>
-                                <div className="text-lg font-semibold text-gray-900">{response.summary.total}</div>
-                            </div>
-                            <div className="bg-green-50 p-3 rounded-md border border-green-200">
-                                <div className="text-xs text-green-600 mb-1">Valid</div>
-                                <div className="text-lg font-semibold text-green-700">{response.summary.valid}</div>
-                            </div>
-                            <div className="bg-red-50 p-3 rounded-md border border-red-200">
-                                <div className="text-xs text-red-600 mb-1">Invalid</div>
-                                <div className="text-lg font-semibold text-red-700">{response.summary.invalid}</div>
-                            </div>
-                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                <div className="text-xs text-gray-500 mb-1">Missing Values</div>
-                                <div className="text-lg font-semibold text-gray-900">{response.summary.missingValues}</div>
-                            </div>
-                            <div className="bg-green-50 p-3 rounded-md border border-green-200">
-                                <div className="text-xs text-green-600 mb-1">Saved</div>
-                                <div className="text-lg font-semibold text-green-700">{response.saved}</div>
-                            </div>
-                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                <div className="text-xs text-gray-500 mb-1">Skipped</div>
-                                <div className="text-lg font-semibold text-gray-900">{response.skippedDuplicates}</div>
-                            </div>
+                            <StatCard label="Total Rows" value={response.summary.total} variant="default" />
+                            <StatCard label="Valid" value={response.summary.valid} variant="success" />
+                            <StatCard label="Invalid" value={response.summary.invalid} variant="error" />
+                            <StatCard label="Missing Values" value={response.summary.missingValues} variant="default" />
+                            <StatCard label="Saved" value={response.saved} variant="success" />
+                            <StatCard label="Skipped" value={response.skippedDuplicates} variant="default" />
                         </div>
                     </div>
 
